@@ -1,10 +1,10 @@
 'use strict';
 
-var validate = require("validate.js");
-var redisClient = require(appRoot+'/app/adaptors/redis');
+var validate = require("validator");
+var redisClient = require(appRoot+'/app/adaptors/redis.js');
 
 
-module.exports.setFcmIdByUserId = function(request, reply){
+module.exports.setFcmIdWithUserId = function(request, reply){
   var constraints = {
     userId: {
       presence: true,

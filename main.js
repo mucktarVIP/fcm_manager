@@ -6,14 +6,14 @@ var path = require('path');
 global.appRoot = path.resolve(__dirname);
 
 const NS = "/api";
-const VERSION = "/v1.0.0/";
+const VERSION = "/v1.0.0";
 
 
-var fcmController = require("app/controllers/fcmTokens");
-
-
-server.route({ method: 'GET', path:NS+VERSION+'/users/{userId}/fcmId', handler: fcmController.getFcmIdByUserId });
-server.route({ method: 'PUT', path:NS+VERSION+'/users/{userId}/fcmId/{fcmId}', handler: fcmController.setFcmIdWithUserId });
+var fcmController = require(appRoot+"/app/controllers/fcmTokens.js");
+server.route([
+  { method: 'GET', path:NS+VERSION+'/users/{userId}/fcmId', handler: fcmController.getFcmIdByUserId },
+  { method: 'PUT', path:NS+VERSION+'/users/{userId}/fcmId/{fcmId}', handler: fcmController.setFcmIdWithUserId }
+]);
 
 server.start((err) => {
     if (err) throw err;

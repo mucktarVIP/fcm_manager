@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node main.js"
+    "start": "$(npm bin)/forever main.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "forever": "^0.15.3",
     "hapi": "^16.1.1",
     "promise": "^7.1.1",
     "redis": "^2.7.1",
