@@ -1,6 +1,7 @@
 'use strict';
 
-var validate = require("validator");
+var validate = require("validate.js");
+var Boom = require('boom');
 var redisClient = require(appRoot+'/app/adaptors/redis.js');
 
 
@@ -22,24 +23,16 @@ module.exports.setFcmIdWithUserId = function(request, reply){
   var errors = validate(data, constraints);
 
   if (errors) {
-    reply(new Error('Not a valid data'));
+    reply(Boom.badRequest('Not a valid data'));
     return;
   }
 
   redisClient.write(data.userId, data.fcmId)
     .then(function (res){
-      var response = {
-        statusCode: 200,
-        body: JSON.stringify({
-          message: 'User token succesfully added',
-        }),
-      };
-
-      reply(null, response);
+      reply({message:'User token succesfully added'}).code(200);
     })
     .catch(function (err){
-      console.error(err);
-      reply(new Error('Couldn\'t set the user fcm token, ' + err.code));
+      reply(Boom.badRequest('Couldn\'t set the user fcm token'));
       return;
     });
 }
@@ -60,25 +53,15 @@ module.exports.getFcmIdByUserId = function(request, reply){
   var errors = validate.single(userId, constraints.userId);
 
   if (errors) {
-    reply(new Error('Not a valid data'));
-    return;
+    reply(Boom.badRequest('Not a valid user'));
   }
 
   redisClient.read(userId)
     .then(function (res){
-      var response = {
-        statusCode: 200,
-        body: JSON.stringify({
-          token: res,
-        }),
-      };
-
-      reply(null, response);
+      reply({token: res}).code(200);
     })
     .catch(function (err){
-      console.error(err);
-      reply(new Error('Couldn\'t get the user fcm token.'));
+      reply(Boom.badRequest(err));
       return;
     });
 }
-
