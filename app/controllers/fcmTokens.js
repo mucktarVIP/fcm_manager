@@ -2,8 +2,9 @@
 
 var validate = require("validate.js");
 var Boom = require('boom');
-var redisClient = require(appRoot+'/app/adaptors/redis.js');
+var RedisClient = require(appRoot + '/app/adaptors/redis.js');
 
+var client = new RedisClient(config.get('redis').connection);
 
 module.exports.setFcmIdWithUserId = function(request, reply){
   var constraints = {
@@ -27,13 +28,15 @@ module.exports.setFcmIdWithUserId = function(request, reply){
     return;
   }
 
-  redisClient.write(data.userId, data.fcmId)
+  client.selectDB(config.get('redis').db.userFcm)
+    .then(function (){
+      return client.write(data.userId, data.fcmId);
+    })
     .then(function (res){
       reply({message:'User token succesfully added'}).code(200);
     })
     .catch(function (err){
       reply(Boom.badRequest('Couldn\'t set the user fcm token'));
-      return;
     });
 }
 
@@ -56,12 +59,14 @@ module.exports.getFcmIdByUserId = function(request, reply){
     reply(Boom.badRequest('Not a valid user'));
   }
 
-  redisClient.read(userId)
+  client.selectDB(config.get('redis').db.userFcm)
+    .then(function(){
+      return client.read(userId)
+    })
     .then(function (res){
       reply({token: res}).code(200);
     })
     .catch(function (err){
       reply(Boom.badRequest(err));
-      return;
     });
 }

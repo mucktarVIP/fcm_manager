@@ -4,9 +4,9 @@ const Hapi = require('hapi');
 const server = new Hapi.Server();
 
 var path = require('path');
-global.appRoot = path.resolve(__dirname);
 
-var config = require(appRoot + '/app/config/app.js');
+global.appRoot = path.resolve(__dirname);
+global.config = require(appRoot + '/app/config/app.js');
 
 server.connection(config.get('server'));
 
@@ -15,11 +15,15 @@ const VERSION = "/v1.0.0";
 
 
 var fcmController = require(appRoot+"/app/controllers/fcmTokens.js");
-
+var cartAbandonmentController = require(appRoot+"/app/controllers/cartAbandonmentSender.js");
 
 server.route([
   { method: 'GET', path:NS+VERSION+'/users/{userId}/fcmId', handler: fcmController.getFcmIdByUserId },
-  { method: 'PUT', path:NS+VERSION+'/users/{userId}/fcmId/{fcmId}', handler: fcmController.setFcmIdWithUserId }
+  { method: 'PUT', path:NS+VERSION+'/users/{userId}/fcmId/{fcmId}', handler: fcmController.setFcmIdWithUserId },
+
+  { method: 'POST', path:NS+VERSION+'/cartAbandonmentSender/first', handler: cartAbandonmentController.first },
+  { method: 'POST', path:NS+VERSION+'/cartAbandonmentSender/second', handler: cartAbandonmentController.second },
+  { method: 'POST', path:NS+VERSION+'/cartAbandonmentSender/third', handler: cartAbandonmentController.third }
 ]);
 
 server.start((err) => {
