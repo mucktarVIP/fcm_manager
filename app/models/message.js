@@ -22,8 +22,8 @@ module.exports.fetchQueue = function(db){
         return client.readBulk(keys);
       })
       .then(function(messageArray){
-        resolve(messages.map(function(messageArray){
-          return JSON.parse(messageArray);
+        resolve(messageArray.map(function(message){
+          return JSON.parse(message);
         }));
       })
       .catch(function(err){
