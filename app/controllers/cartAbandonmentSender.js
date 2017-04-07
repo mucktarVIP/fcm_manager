@@ -27,6 +27,10 @@ module.exports.first = function(request, reply){
         }
       });
 
+      if (!filteredMessages.length) {
+        return Promise.reject('No message meet the first send condition');
+      }
+
       return message.assignFcmToken(filteredMessages);
     })
     // format message
