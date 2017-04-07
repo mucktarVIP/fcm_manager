@@ -5,6 +5,10 @@ Confidence = require('confidence');
 store = new Confidence.Store({
   server: {
     $filter: 'env',
+    dev: {
+      host: '0.0.0.0',
+      port: 80
+    },
     production: {},
     $default: {
       host: '127.0.0.1',
