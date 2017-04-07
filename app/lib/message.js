@@ -43,7 +43,9 @@ module.exports.assignFcmToken = function(messages){
         var assigned = messages.filter(function(message, index){
           if (response[index]) {
             message.to = response[index];
-            return message;
+            return true;
+          } else {
+            return false;
           }
         });
 
@@ -71,7 +73,7 @@ module.exports.format = function(messages, type){
           payloads.push(tmpMessage);
         }
 
-        // resolve(payloads);
+        resolve(payloads);
       }
     });
   });

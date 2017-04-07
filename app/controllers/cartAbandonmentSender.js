@@ -18,24 +18,26 @@ module.exports.first = function(request, reply){
     .then(function(messages){
       var currentTime = new Date().getTime();
       // filter lifetimes and not sent
-      var validMessages = messages.filter(function(item){
+      var filteredMessages = messages.filter(function(item){
         var timeSpend = currentTime - item.created_at;
         if (timeSpend >= lifetimes[0] && timeSpend < lifetimes[1] && !item['is_'+ converter.toWordsOrdinal(1) + '_sent']) {
-          return item;
+          return true;
+        } else {
+          return false;
         }
       });
 
-      return message.assignFcmToken(validMessages);
+      return message.assignFcmToken(filteredMessages);
     })
     // format message
     .then(function(assignedMessages){
       // save message for update sent param
-        if (!assignedMessages || !assignedMessages.length) {
-          return Promise.reject('No message to send');
-        } else {
-          _messages = assignedMessages;
-          return message.format(assignedMessages, 'cartAbandonment');
-        }
+      if (!assignedMessages || !assignedMessages.length) {
+        return Promise.reject('No message to send');
+      } else {
+        _messages = assignedMessages;
+        return message.format(assignedMessages, 'cartAbandonment');
+      }
     })
     // send
     .then(function(payloads){
