@@ -16,11 +16,14 @@ module.exports.fetchQueue = function(db){
         return client.getKeysByPattern('*');
       })
       .then(function(keys){
+        if(!keys.length)
+          return Promise.reject('Message empty');
+
         return client.readBulk(keys);
       })
-      .then(function(messages){
-        resolve(messages.map(function(message){
-          return JSON.parse(message);
+      .then(function(messageArray){
+        resolve(messages.map(function(messageArray){
+          return JSON.parse(messageArray);
         }));
       })
       .catch(function(err){
@@ -37,7 +40,12 @@ module.exports.assignFcmToken = function(messages){
         for (var i = 0; i < messages.length; i++) {
           keys.push(messages[i].user_id);
         }
-        return client.readBulk(keys)
+
+        if (!keys.length) {
+          return Promise.reject("User not found");
+        } else {
+          return client.readBulk(keys)
+        }
       })
       .then(function(response){
         var assigned = messages.filter(function(message, index){

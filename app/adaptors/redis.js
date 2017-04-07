@@ -56,6 +56,7 @@ RedisClient.prototype.read = function(key){
 };
 
 RedisClient.prototype.readBulk = function(keys){
+  console.log('keys', keys);
   return new Promise((resolve, reject) => {
     this.client.mget(keys, function (err, res) {
       // get only handles string value
