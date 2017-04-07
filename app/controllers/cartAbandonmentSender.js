@@ -3,8 +3,8 @@
 var Promise = require('promise');
 var converter = require('number-to-words');
 var Boom = require('boom');
-var message = require(appRoot + '/app/lib/message.js');
-var Fcm = require(appRoot + '/app/lib/fcm.js');
+var message = require(appRoot + '/app/models/message.js');
+var Fcm = require(appRoot + '/app/adaptors/fcm.js');
 
 
 var lifetimes = config.get('lifetimes');

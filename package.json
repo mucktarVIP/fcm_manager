@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "$(npm bin)/forever main.js",
+    "start": "echo \"Specify env -- start:(dev|prod)\"",
+    "start:dev": "ENVIRONTMENT=dev $(npm bin)/forever main.js",
+    "start:prod": "ENVIRONTMENT=production $(npm bin)/forever main.js",
     "dev": "ENVIRONTMENT=dev $(npm bin)/forever main.js"
   },
   "author": "",

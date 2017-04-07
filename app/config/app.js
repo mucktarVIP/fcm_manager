@@ -6,20 +6,20 @@ store = new Confidence.Store({
   server: {
     $filter: 'env',
     dev: {
-      host: '0.0.0.0',
-      port: 80
+      host: '127.0.0.1',
+      port: 8000
     },
     production: {},
     $default: {
-      host: '127.0.0.1',
-      port: 8000
+      host: '0.0.0.0',
+      port: 80
     }
   },
   redis: {
     $filter: 'env',
     dev: {
       connection: {
-        host: 'vip-web-session-stg.czrxsu.0001.apse1.cache.amazonaws.com',
+        host: "127.0.0.1",
         port: 6379
       },
       db: {
@@ -33,7 +33,7 @@ store = new Confidence.Store({
     production: {},
     $default: {
       connection: {
-        host: "127.0.0.1",
+        host: 'vip-web-session-stg.czrxsu.0001.apse1.cache.amazonaws.com',
         port: 6379
       },
       db: {
