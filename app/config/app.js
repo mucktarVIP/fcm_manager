@@ -27,7 +27,7 @@ store = new Confidence.Store({
       },
       db: {
         userFcm: 1,
-        cartAbandonment: 0,
+        cartAbandonment: 2,
         bankTransferExpiration: 3,
         pointExpiration: 4,
         shipment: 5
