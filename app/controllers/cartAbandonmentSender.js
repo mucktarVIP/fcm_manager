@@ -62,9 +62,10 @@ module.exports.first = function(request, reply){
       // filter lifetimes and not sent
       var filteredMessages = filterByLifetimes(messages, step);
 
-      if (!filteredMessages.length) return Promise.reject('No message meet the first send condition');
-
-      return message.assignFcmToken(filteredMessages);
+      if (!filteredMessages.length)
+        return Promise.reject('No message meet the first send condition');
+      else
+        return message.assignFcmToken(filteredMessages);
     })
     // process message
     .then(processMessage)
@@ -77,14 +78,16 @@ module.exports.first = function(request, reply){
     });
 };
 
-module.exports.second = function(){
+module.exports.second = function(request, reply){
   step = 2;
 
   message.fetchQueue(db)
     .then(function (messages){
       var filteredMessages = filterByLifetimes(messages, step);
-      if (!filteredMessages.length) return Promise.reject('No message meet the second send condition');
-      return message.assignFcmToken(filteredMessages);
+      if (!filteredMessages.length)
+        return Promise.reject('No message meet the second send condition');
+      else
+        return message.assignFcmToken(filteredMessages);
     })
     .then(processMessage)
     .then(function(){
@@ -96,14 +99,16 @@ module.exports.second = function(){
     });
 };
 
-module.exports.third = function(){
+module.exports.third = function(request, reply){
   step = 3;
 
   message.fetchQueue(db)
     .then(function (messages){
       var filteredMessages = filterByLifetimes(messages, step);
-      if (!filteredMessages.length) return Promise.reject('No message meet the third send condition');
-      return message.assignFcmToken(filteredMessages);
+      if (!filteredMessages.length)
+        return Promise.reject('No message meet the third send condition');
+      else
+        return message.assignFcmToken(filteredMessages);
     })
     .then(processMessage)
     .then(function(){
