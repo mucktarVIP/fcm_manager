@@ -29,28 +29,24 @@ function filterByLifetimes(messages){
 }
 
 function processMessage(messageArray){
-  if (!messageArray || !messageArray.length) {
-    return Promise.reject('No message to send');
-  } else {
-    _messages = messageArray;
-    return message.format(messageArray, 'cartAbandonment')
-      .then(function(payloads){
-        let sendStack = [];
-        payloads.forEach(function(payload) {
-          sendStack.push(fcmClient.send(payload));
-        });
-
-        return Promise.all(sendStack);
-      })
-      // update sent param;
-      .then(function(res){
-        let updateStack = [];
-        _messages.forEach(function(item) {
-          updateStack.push(message.updateSentParam(item, step, db));
-        });
-        return Promise.all(updateStack);
+  _messages = messageArray;
+  return message.format(messageArray, 'cartAbandonment')
+    .then(function(payloads){
+      let sendStack = [];
+      payloads.forEach(function(payload) {
+        sendStack.push(fcmClient.send(payload));
       });
-  }
+
+      return Promise.all(sendStack);
+    })
+    // update sent param;
+    .then(function(res){
+      let updateStack = [];
+      _messages.forEach(function(item) {
+        updateStack.push(message.updateSentParam(item, step, db));
+      });
+      return Promise.all(updateStack);
+    });
 }
 
 module.exports.first = function(request, reply){
@@ -61,7 +57,6 @@ module.exports.first = function(request, reply){
     .then(function(messages){
       // filter lifetimes and not sent
       var filteredMessages = filterByLifetimes(messages, step);
-
       if (!filteredMessages.length)
         return Promise.reject('No message meet the first send condition');
       else

@@ -40,7 +40,7 @@ module.exports.assignFcmToken = function(messages){
         for (var i = 0; i < messages.length; i++) {
           keys.push(messages[i].user_id);
         }
-        
+
         if (!keys.length) {
           return Promise.reject("User not found");
         } else {
@@ -57,7 +57,10 @@ module.exports.assignFcmToken = function(messages){
           }
         });
 
-        resolve(assigned);
+        if (!assigned.length)
+          reject('No message to send, no matched message user_id and fcm token');
+        else
+          resolve(assigned);
       })
       .catch(function(err){
         reject(err);
