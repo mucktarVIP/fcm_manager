@@ -3,16 +3,12 @@
 var Promise = require('promise');
 var converter = require('number-to-words');
 var Boom = require('boom');
-var message = require(appRoot + '/app/models/message.js');
-var Fcm = require(appRoot + '/app/adaptors/fcm.js');
+var messageService = require(appRoot + '/app/services/message.js');
 
-
-var lifetimes = config.get('lifetimes');
-var fcmClient = new Fcm(config.get('fcm').serverKey);
-
-var _messages = [], db = config.get('redis').db.cartAbandonment, step=1;
+var db = config.get('redis').db.cartAbandonment, sentMessages = [], step=1;
 
 function filterByLifetimes(messages){
+  var lifetimes = config.get('lifetimes');
   var currentTime = new Date().getTime();
 
   var filtered = messages.filter(function(item){
@@ -28,47 +24,49 @@ function filterByLifetimes(messages){
   return filtered;
 }
 
-function processMessage(messageArray){
-  if (!messageArray || !messageArray.length) {
-    return Promise.reject('No message to send');
-  } else {
-    _messages = messageArray;
-    return message.format(messageArray, 'cartAbandonment')
-      .then(function(payloads){
-        let sendStack = [];
-        payloads.forEach(function(payload) {
-          sendStack.push(fcmClient.send(payload));
-        });
+function processMessages(messages){
+  var sendFcmRequest = messages.map(function(fcmRequest){
+    if(!fcmRequest.error){
+      return fcmRequest.send(config.get('fcm').serverKey)
+    }
+  });
 
-        return Promise.all(sendStack);
+  if (!sendFcmRequest.length) {
+    return Promise.reject('Cannot send message, no fcm_user match');
+  } else {
+    return Promise.all(sendFcmRequest.map(function(promise){
+      return promise.catch(function(err){
+        return {error:err};
       })
-      // update sent param;
-      .then(function(res){
-        let updateStack = [];
-        _messages.forEach(function(item) {
-          updateStack.push(message.updateSentParam(item, step, db));
-        });
-        return Promise.all(updateStack);
-      });
+    }));
   }
-}
+};
 
 module.exports.first = function(request, reply){
   step = 1;
   // raw message queue
-  message.fetchQueue(db)
-    // assign fcm token
+  messageService.fetchQueue(db)
+    // filter message by lifetime and sent status
     .then(function(messages){
-      // filter lifetimes and not sent
-      var filteredMessages = filterByLifetimes(messages, step);
+      var filteredMessages = filterByLifetimes(messages);
 
-      if (!filteredMessages.length)
+      if (!filteredMessages.length){
         return Promise.reject('No message meet the first send condition');
-      else
-        return message.assignFcmToken(filteredMessages);
+      } else{
+        // save filtered message, used later in updating sent status
+        sentMessages = filteredMessages;
+        return messageService.formatMessages(filteredMessages, 'cartAbandonmentFirstMessage');
+      }
     })
     // process message
-    .then(processMessage)
+    .then(processMessages)
+    // update redis status for sent message
+    .then(function(){
+      var updateMessage = sentMessages.map(function(messageItem){
+          return messageService.updateSentParam(messageItem, step, db);
+      });
+      return Promise.all(updateMessage);
+    })
     .then(function(){
       reply({message: 'Sent'}).code(200);
     })
@@ -83,13 +81,23 @@ module.exports.second = function(request, reply){
 
   message.fetchQueue(db)
     .then(function (messages){
-      var filteredMessages = filterByLifetimes(messages, step);
-      if (!filteredMessages.length)
+      var filteredMessages = filterByLifetimes(messages);
+
+      if (!filteredMessages.length){
         return Promise.reject('No message meet the second send condition');
-      else
-        return message.assignFcmToken(filteredMessages);
+      } else{
+        // save filtered message, used later in updating sent status
+        sentMessages = filteredMessages;
+        return messageService.formatMessages(filteredMessages, 'cartAbandonmentSecondMessage');
+      }
     })
     .then(processMessage)
+    .then(function(){
+      var updateMessage = sentMessages.map(function(messageItem){
+          return messageService.updateSentParam(messageItem, step, db);
+      });
+      return Promise.all(updateMessage);
+    })
     .then(function(){
       reply({message: 'Sent'}).code(200);
     })
@@ -104,13 +112,23 @@ module.exports.third = function(request, reply){
 
   message.fetchQueue(db)
     .then(function (messages){
-      var filteredMessages = filterByLifetimes(messages, step);
-      if (!filteredMessages.length)
+      var filteredMessages = filterByLifetimes(messages);
+
+      if (!filteredMessages.length){
         return Promise.reject('No message meet the third send condition');
-      else
-        return message.assignFcmToken(filteredMessages);
+      } else{
+        // save filtered message, used later in updating sent status
+        sentMessages = filteredMessages;
+        return messageService.formatMessages(filteredMessages, 'cartAbandonmentThirdMessage');
+      }
     })
     .then(processMessage)
+    .then(function(){
+      var deleteMessages = sentMessages.map(function(messageItem){
+          // some delete service
+      });
+      return Promise.all(deleteMessages);
+    })
     .then(function(){
       reply({message: 'Sent'}).code(200);
     })

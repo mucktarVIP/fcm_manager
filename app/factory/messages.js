@@ -1,24 +1,25 @@
-var Request = require('./../../models/fcm/request');
-var NotificationPayload = require('./../../models/fcm/notificationPayload');
-var DataPayload = require('./../../models/fcm/dataPayload');
-var Options = require('./../../models/fcm/options');
+var Request = require('../models/fcm/request');
+var NotificationPayload = require('../models/fcm/notificationPayload');
+var DataPayload = require('../models/fcm/dataPayload');
+var Options = require('../models/fcm/options');
 
-module.exports = function cartAbandonment(){
-  var notification = new NotificationPayload('Cart Abandonment Title');
-  var data = new DataPayload();
-  var options = new Options();
-  var request = new Request();
-  
-  notification.setBody('Cart Abandonment body');
-  notification.setIcon('ic_notification');
-  notification.setSound('notification');
-  notification.setClickAction('');
+module.exports = {
+  cartAbandonmentFirstMessage: function(){
+    var notification = new NotificationPayload('Cart Abandonment First Notification Title');
+    notification.setBody('Cart Abandonment first notification body');
+    notification.setIcon('ic_notification');
+    notification.setSound('notification');
+    notification.setClickAction('');
 
-  options.setPriority('high');
+    return new Request(null, notification);
+  },
+  cartAbandonmentSecondMessage: function(){
+    var notification = new NotificationPayload('Cart Abandonment Second Notification Title');
+    notification.setBody('Cart Abandonment second notification body');
+    notification.setIcon('ic_notification');
+    notification.setSound('notification');
+    notification.setClickAction('');
 
-
-  request.addNotificationPayload(notification);
-  request.addOptions(options);
-
-  return request;
-}
+    return new Request(null, notification);
+  }
+};

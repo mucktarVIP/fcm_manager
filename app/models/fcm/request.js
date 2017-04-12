@@ -4,12 +4,12 @@
 var Fcm = require('./../../adaptors/fcm.js');
 var _ = require('lodash');
 
-var Request = function(){
-  this.to = '';
-  this.topic = null;
-  this.options = {};
-  this.notification = {};
-  this.data = {};
+var Request = function(to, notification, data, options, topic){
+  this.to = to;
+  this.topic = topic;
+  this.options = options
+  this.notification = notification;
+  this.data = data;
 };
 
 Request.prototype.addTo = function(to){
@@ -36,8 +36,8 @@ Request.prototype.build = function(){
   var request = {
     to: this.to,
     topic: this.topic,
-    notification: this.notification.build(),
-    data: this.data.build()
+    notification: this.notification ? this.notification.build() : {},
+    data: this.data ? this.data.build() : {}
   }
 
   request = _.merge(request, this.options.build());
