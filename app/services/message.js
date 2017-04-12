@@ -82,6 +82,9 @@ module.exports.updateSentParam = function(message, nth, db){
   });
 }
 
-module.exports.deleteFromQueue = function(){
-
+module.exports.deleteFromQueue = function(keys, db){
+  return client.selectDB(db)
+    .then(function(){
+      return client.deleteBulk(keys);
+    })
 }

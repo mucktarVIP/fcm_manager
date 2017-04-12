@@ -17,7 +17,7 @@ User.prototype.getFcmToken = function(){
 
 User.prototype.setFcmToken = function(token){
   var self = this;
-  return client.selectDB(self.db)
+  return client.selectDB(db)
     .then(function(){
       return client.write(self.userId, token);
     });

@@ -1,4 +1,3 @@
-/* @flow */
 'use strict';
 
 var Fcm = require('./../../adaptors/fcm.js');
@@ -37,10 +36,10 @@ Request.prototype.build = function(){
     to: this.to,
     topic: this.topic,
     notification: this.notification ? this.notification.build() : {},
-    data: this.data ? this.data.build() : {}
+    data: this.data ? this.data.get() : {}
   }
 
-  request = _.merge(request, this.options.build());
+  request = _.merge(request, this.options ? this.options.build() : {});
 
   return _.omitBy(request, _.isNil);
 }

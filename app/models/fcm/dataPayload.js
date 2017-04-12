@@ -1,11 +1,10 @@
-/* @flow */
 'use strict';
 
-var DataPayload = function(){
-  this.data = {};
+var DataPayload = function(data){
+  this.data = data;
 };
 
-DataPayload.prototype.toArray = function(){
+DataPayload.prototype.get = function(){
   return this.data;
 }
 

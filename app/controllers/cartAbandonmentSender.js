@@ -4,6 +4,7 @@ var Promise = require('promise');
 var converter = require('number-to-words');
 var Boom = require('boom');
 var messageService = require(appRoot + '/app/services/message.js');
+var _ = require('lodash');
 
 var db = config.get('redis').db.cartAbandonment, sentMessages = [], step=1;
 
@@ -25,16 +26,16 @@ function filterByLifetimes(messages){
 }
 
 function processMessages(messages){
-  var sendFcmRequest = messages.map(function(fcmRequest){
+  var sendFcmRequest = _.omitBy(_.map(messages, function(fcmRequest){
     if(!fcmRequest.error){
       return fcmRequest.send(config.get('fcm').serverKey)
     }
-  });
+  }), _.isNil);
 
-  if (!sendFcmRequest.length) {
+  if (!Object.keys(sendFcmRequest).length) {
     return Promise.reject('Cannot send message, no fcm_user match');
   } else {
-    return Promise.all(sendFcmRequest.map(function(promise){
+    return Promise.all(_.map(sendFcmRequest, function(promise){
       return promise.catch(function(err){
         return {error:err};
       })
@@ -62,7 +63,7 @@ module.exports.first = function(request, reply){
     .then(processMessages)
     // update redis status for sent message
     .then(function(){
-      var updateMessage = sentMessages.map(function(messageItem){
+      var updateMessage = _.map(sentMessages, function(messageItem){
           return messageService.updateSentParam(messageItem, step, db);
       });
       return Promise.all(updateMessage);
@@ -79,7 +80,7 @@ module.exports.first = function(request, reply){
 module.exports.second = function(request, reply){
   step = 2;
 
-  message.fetchQueue(db)
+  messageService.fetchQueue(db)
     .then(function (messages){
       var filteredMessages = filterByLifetimes(messages);
 
@@ -91,9 +92,9 @@ module.exports.second = function(request, reply){
         return messageService.formatMessages(filteredMessages, 'cartAbandonmentSecondMessage');
       }
     })
-    .then(processMessage)
-    .then(function(){
-      var updateMessage = sentMessages.map(function(messageItem){
+    .then(processMessages)
+    .then(function(sentStatus){
+      var updateMessage = _.map(sentMessages, function(messageItem){
           return messageService.updateSentParam(messageItem, step, db);
       });
       return Promise.all(updateMessage);
@@ -110,7 +111,7 @@ module.exports.second = function(request, reply){
 module.exports.third = function(request, reply){
   step = 3;
 
-  message.fetchQueue(db)
+  messageService.fetchQueue(db)
     .then(function (messages){
       var filteredMessages = filterByLifetimes(messages);
 
@@ -122,14 +123,15 @@ module.exports.third = function(request, reply){
         return messageService.formatMessages(filteredMessages, 'cartAbandonmentThirdMessage');
       }
     })
-    .then(processMessage)
+    .then(processMessages)
     .then(function(){
-      var deleteMessages = sentMessages.map(function(messageItem){
-          // some delete service
+      var keys = _.map(sentMessages, function(messageItem){
+          return messageItem.user_id;
       });
-      return Promise.all(deleteMessages);
+
+      return messageService.deleteFromQueue(keys, db);
     })
-    .then(function(){
+    .then(function(res){
       reply({message: 'Sent'}).code(200);
     })
     .catch(function(err){

@@ -26,7 +26,7 @@ module.exports.setFcmIdWithUserId = function(request, reply){
     reply(Boom.badRequest('Not a valid data'));
     return;
   }
-
+  
   var user = new User(data.userId);
 
   user.setFcmToken(data.fcmId)
