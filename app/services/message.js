@@ -59,7 +59,10 @@ module.exports.generateFcmRequest = function(message, messageType){
         resolve(request);
       })
       .catch(function(){
-        reject('no matched user from fcm_user');
+        reject({
+          message:'no matched user from fcm_user',
+          user_id: message.user_id
+        });
       });
   })
 };

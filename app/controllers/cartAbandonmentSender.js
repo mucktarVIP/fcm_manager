@@ -26,11 +26,22 @@ function filterByLifetimes(messages){
 }
 
 function processMessages(messages){
+  var messageNoUserKeys = [];
   var sendFcmRequest = _.omitBy(_.map(messages, function(fcmRequest){
     if(!fcmRequest.error){
       return fcmRequest.send(config.get('fcm').serverKey)
+    } else {
+      messageNoUserKeys.push(fcmRequest.error.user_id);
     }
   }), _.isNil);
+
+  if (messageNoUserKeys.length) {
+    messageService.deleteFromQueue(messageNoUserKeys, db);
+    // remove message from update array
+    sentMessages = sentMessages.filter(function (item){
+      return !_.includes(messageNoUserKeys, item.user_id);
+    });
+  }
 
   if (!Object.keys(sendFcmRequest).length) {
     return Promise.reject('Cannot send message, no fcm_user match');
