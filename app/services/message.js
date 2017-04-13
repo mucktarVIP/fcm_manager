@@ -4,9 +4,6 @@ var RedisClient = require(appRoot + '/app/adaptors/redis.js');
 var User = require(appRoot + '/app/models/user.js');
 var Promise = require('promise');
 var converter = require('number-to-words');
-var util = require('util');
-var path = require('path');
-var fs = require("fs");
 
 var messageFactory = require(appRoot + '/app/factory/messages.js');
 
