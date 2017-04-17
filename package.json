@@ -18,6 +18,7 @@
     "confidence": "^3.0.2",
     "forever": "^0.15.3",
     "hapi": "^16.1.1",
+    "lodash": "^4.17.4",
     "number-to-words": "^1.2.3",
     "promise": "^7.1.1",
     "redis": "^2.7.1",
