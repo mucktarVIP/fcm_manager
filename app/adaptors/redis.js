@@ -82,4 +82,14 @@ RedisClient.prototype.getKeysByPattern = function (pattern){
   });
 };
 
+RedisClient.prototype.deleteBulk = function(keys){
+  return new Promise((resolve, reject) => {
+    this.client.del(keys, function (err, res){
+      if (err) reject(err);
+      else resolve(res);
+    });
+  });
+};
+
+
 module.exports = RedisClient;
