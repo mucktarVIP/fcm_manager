@@ -1,7 +1,6 @@
-'use strict';
-
 const Hapi = require('hapi');
 const server = new Hapi.Server();
+require("./app/lib/magic.js");
 
 var path = require('path');
 
