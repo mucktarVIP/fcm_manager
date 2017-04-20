@@ -6,9 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "echo \"Specify env -- start:(local|dev|prod)\"",
-    "start:local": "ENVIRONTMENT=local $(npm bin)/forever main.js",
-    "start:dev": "ENVIRONTMENT=dev $(npm bin)/forever main.js",
-    "start:prod": "ENVIRONTMENT=production $(npm bin)/forever main.js",
+    "start:local": "ENVIRONTMENT=local $(npm bin)/forever start main.js",
+    "start:dev": "ENVIRONTMENT=dev $(npm bin)/forever start main.js",
+    "start:prod": "ENVIRONTMENT=production $(npm bin)/forever start main.js",
+    "restart:local": "ENVIRONTMENT=local $(npm bin)/forever restart main.js",
+    "restart:dev": "ENVIRONTMENT=dev $(npm bin)/forever restart main.js",
+    "restart:prod": "ENVIRONTMENT=production $(npm bin)/forever restart main.js",
     "nginx:install": "sudo bash ./deploy/cmd/setup",
     "dev": "ENVIRONTMENT=dev $(npm bin)/forever main.js"
   },

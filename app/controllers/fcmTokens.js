@@ -6,6 +6,8 @@ var RedisClient = require(appRoot + '/app/adaptors/redis.js');
 var User = require(appRoot + '/app/models/user.js');
 
 module.exports.setFcmIdWithUserId = function(request, reply){
+  server.log(["info", __filename, arguments.callee.name, "run"], request.params);
+  server.log(["info", "setFcmIdWithUserId", "run"], request.params);
   var constraints = {
     userId: {
       presence: true,
@@ -40,6 +42,7 @@ module.exports.setFcmIdWithUserId = function(request, reply){
 
 
 module.exports.getFcmIdByUserId = function(request, reply){
+  server.log(["info", __filename, arguments.callee.name, "run"], request.params);
   var constraints = {
     userId: {
       presence: true,
