@@ -9,6 +9,7 @@
     "start:local": "ENVIRONTMENT=local $(npm bin)/forever main.js",
     "start:dev": "ENVIRONTMENT=dev $(npm bin)/forever main.js",
     "start:prod": "ENVIRONTMENT=production $(npm bin)/forever main.js",
+    "nginx:install": "sudo bash ./deploy/cmd/setup",
     "dev": "ENVIRONTMENT=dev $(npm bin)/forever main.js"
   },
   "author": "",

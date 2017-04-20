@@ -18,6 +18,7 @@ var fcmController = require(appRoot+"/app/controllers/fcmTokens.js");
 var cartAbandonmentController = require(appRoot+"/app/controllers/cartAbandonmentSender.js");
 
 server.route([
+  { method: 'GET', path:"/stats", handler: function(request, reply){ reply("ok"); } },
   { method: 'GET', path:NS+VERSION+'/users/{userId}/fcmId', handler: fcmController.getFcmIdByUserId },
   { method: 'PUT', path:NS+VERSION+'/users/{userId}/fcmId/{fcmId}', handler: fcmController.setFcmIdWithUserId },
 
