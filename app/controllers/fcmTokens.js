@@ -59,7 +59,7 @@ module.exports.getFcmIdByUserId = function(request, reply){
 
   var user = new User(userId);
 
-  user.getFcmToken(data.fcmId)
+  user.getFcmToken()
     .then(function (res){
       reply({token: res}).code(200);
     })

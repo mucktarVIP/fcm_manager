@@ -12,7 +12,8 @@
     "restart:local": "ENVIRONTMENT=local $(npm bin)/forever restart main.js -o ./log/system.log -e ./log/system.log",
     "restart:dev": "ENVIRONTMENT=dev $(npm bin)/forever restart main.js -o ./log/system.log -e ./log/system.log",
     "restart:prod": "ENVIRONTMENT=production $(npm bin)/forever restart main.js -o ./log/system.log -e ./log/system.log -l ./log/system.log",
-    "log:tail": "tail -f /home/ubuntu/.forever/*.log",
+    "log": "tail -f /home/ubuntu/.forever/*.log",
+    "tail": "tail -f /home/ubuntu/.forever/*.log",
     "nginx:install": "sudo bash ./deploy/cmd/setup"
   },
   "author": "",
