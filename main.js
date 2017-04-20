@@ -7,8 +7,13 @@ var path = require('path');
 
 global.appRoot = path.resolve(__dirname);
 global.config = require(appRoot + '/app/config/app.js');
+global.server = server;
 
 server.connection(config.get('server'));
+
+server.on('log', (event, tags) => {
+    console.log(event, tags);
+});
 
 const NS = "/api";
 const VERSION = "/v1.0.0";
