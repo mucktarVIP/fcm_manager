@@ -5,15 +5,15 @@ var Options = require('../models/fcm/options');
 
 module.exports = {
   cartAbandonmentFirstMessage: function(){
-    var notification = new NotificationPayload('Cart Abandonment First Notification Title');
-    notification.setBody('Cart Abandonment first notification body');
+    var notification = new NotificationPayload('Jangan lupa!');
+    notification.setBody('Barang di keranjang belanja mu akan segera habis. Beli sekarang dan dapatkan 10% VIP Poin');
     notification.setIcon('ic_notification');
     notification.setSound('notification');
     notification.setClickAction('');
 
     var dataBody = {
-  		message: "Cart Abandonment first data message",
-  		title: "Cart Abandonment first data title",
+  		message: 'Barang di keranjang belanja mu akan segera habis. Beli sekarang dan dapatkan 10% VIP Poin',
+  		title: 'Jangan lupa!',
     }
 
     var data = new DataPayload(dataBody);
