@@ -16,6 +16,7 @@ const VERSION = "/v1.0.0";
 
 var fcmController = require(appRoot+"/app/controllers/fcmTokens.js");
 var cartAbandonmentController = require(appRoot+"/app/controllers/cartAbandonmentSender.js");
+var pointExpirationController = require(appRoot+"/app/controllers/pointExpirationSender.js");
 
 server.route([
   { method: 'GET', path:NS+VERSION+'/users/{userId}/fcmId', handler: fcmController.getFcmIdByUserId },
@@ -23,7 +24,10 @@ server.route([
 
   { method: 'POST', path:NS+VERSION+'/cartAbandonmentSender/first', handler: cartAbandonmentController.first },
   { method: 'POST', path:NS+VERSION+'/cartAbandonmentSender/second', handler: cartAbandonmentController.second },
-  { method: 'POST', path:NS+VERSION+'/cartAbandonmentSender/third', handler: cartAbandonmentController.third }
+  { method: 'POST', path:NS+VERSION+'/cartAbandonmentSender/third', handler: cartAbandonmentController.third },
+  
+  { method: 'POST', path:NS+VERSION+'/pointExpiration', handler: pointExpirationController.send },
+  
 ]);
 
 server.start((err) => {

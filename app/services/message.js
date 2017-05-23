@@ -47,7 +47,7 @@ module.exports.formatMessages = function(messages, messageType){
 
 module.exports.generateFcmRequest = function(message, messageType){
   return new Promise(function(resolve, reject){
-    var request = messageFactory[messageType]();
+    var request = messageFactory[messageType](message);
     var user = new User(message.user_id);
     // assign token
     user.getFcmToken()

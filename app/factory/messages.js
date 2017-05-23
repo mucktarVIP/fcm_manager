@@ -51,5 +51,23 @@ module.exports = {
     var data = new DataPayload(dataBody);
 
     return new Request(null, notification, data);
+  },
+  pointExpirationMessage: function(message){
+    var expireDate = new Date(message.expired_at);
+    
+    var notification = new NotificationPayload('Point Expiration Title');
+    notification.setBody('You have ' + message.expired_point + ' Point out of ' + message.total_point + ' that will be expire on ' + expireDate.toString());
+    notification.setIcon('ic_notification');
+    notification.setSound('notification');
+    notification.setClickAction('');
+
+    var dataBody = {
+  		message: 'You have ' + message.expired_point + ' Point out of ' + message.total_point + ' that will be expire on ' + expireDate.toString(),
+  		title: 'Point Expiration Title',
+    }
+
+    var data = new DataPayload(dataBody);
+
+    return new Request(null, notification, data);
   }
 };
