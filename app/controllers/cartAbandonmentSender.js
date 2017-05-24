@@ -1,5 +1,3 @@
-'use strict';
-
 var Promise = require('promise');
 var converter = require('number-to-words');
 var Boom = require('boom');
@@ -55,6 +53,7 @@ function processMessages(messages){
 };
 
 module.exports.first = function(request, reply){
+  server.log(["info", __filename+":"+__line, __function, "run"], request.params);
   step = 1;
   // raw message queue
   messageService.fetchQueue(db)
@@ -90,6 +89,7 @@ module.exports.first = function(request, reply){
 };
 
 module.exports.second = function(request, reply){
+  server.log(["info", __filename+":"+__line, __function, "run"], request.params);
   step = 2;
 
   messageService.fetchQueue(db)
@@ -121,6 +121,7 @@ module.exports.second = function(request, reply){
 };
 
 module.exports.third = function(request, reply){
+  server.log(["info", __filename+":"+__line, __function, "run"], request.params);
   step = 3;
 
   messageService.fetchQueue(db)

@@ -1,0 +1,3 @@
+[32minfo[39m:    Forever restarted process(es):
+[90mdata[39m:    [37m   [39m [37muid[39m  [90mcommand[39m         [90mscript[39m  [37mforever[39m [37mpid[39m   [37mid[39m [35mlogfile[39m                        [33muptime[39m       
+[90mdata[39m:    [0] ZQAK [90m/usr/bin/nodejs[39m [90mmain.js[39m 22516   22589    [35m/home/ubuntu/.forever/ZQAK.log[39m [33m0:0:0:26.881[39m 

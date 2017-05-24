@@ -1,11 +1,10 @@
-'use strict';
-
 var validate = require("validate.js");
 var Boom = require('boom');
 var RedisClient = require(appRoot + '/app/adaptors/redis.js');
 var User = require(appRoot + '/app/models/user.js');
 
 module.exports.setFcmIdWithUserId = function(request, reply){
+  server.log(["info", __filename+":"+__line, __function, "run"], request.params);
   var constraints = {
     userId: {
       presence: true,
@@ -40,6 +39,7 @@ module.exports.setFcmIdWithUserId = function(request, reply){
 
 
 module.exports.getFcmIdByUserId = function(request, reply){
+  server.log(["info", __filename+":"+__line, __function, "run"], request.params);
   var constraints = {
     userId: {
       presence: true,
@@ -59,7 +59,7 @@ module.exports.getFcmIdByUserId = function(request, reply){
 
   var user = new User(userId);
 
-  user.getFcmToken(data.fcmId)
+  user.getFcmToken()
     .then(function (res){
       reply({token: res}).code(200);
     })

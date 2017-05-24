@@ -10,12 +10,12 @@ store = new Confidence.Store({
       port: 8000
     },
     dev: {
-      host: '0.0.0.0',
-      port: 80
+      host: '127.0.0.1',
+      port: 8000
     },
     production: {
-      host: '0.0.0.0',
-      port: 80
+      host: '127.0.0.1',
+      port: 8000
     }
   },
   redis: {

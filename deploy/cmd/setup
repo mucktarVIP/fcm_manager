@@ -1,0 +1,4 @@
+sudo apt-get install nginx
+cp ./deploy/etc/nginx/sites-available/default /etc/nginx/sites-available/default
+sudo nginx -t
+sudo service nginx restart
