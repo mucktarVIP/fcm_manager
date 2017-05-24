@@ -77,8 +77,8 @@ store = new Confidence.Store({
     ]
   },
   pointExpiration:{
-    minAmount: 500,
-    daysBeforeExpire: 60
+    minAmount: 1000,
+    daysLeft: 60
   }
 });
 
