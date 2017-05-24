@@ -6,8 +6,11 @@ var _ = require('lodash');
 
 var db = config.get('redis').db.pointExpiration;
 var minAmount = config.get('pointExpiration').minAmount;
-var daysBeforeExpire = config.get('pointExpiration').daysBeforeExpire;
+var daysLeft = config.get('pointExpiration').daysLeft;
 var sentMessages = [];
+
+var currentTime = new Date().getTime();
+var expireTime = currentTime + (daysLeft * 24 * 60 * 60 * 1000);
 
 function processMessages(messages){
   var sendFcmRequest = _.omitBy(_.map(messages, function(fcmRequest){
@@ -28,8 +31,6 @@ function processMessages(messages){
 }
 
 function formatMessageData(groupedMessages){
-  var currentTime = new Date().getTime();
-  var expireTime = currentTime + (daysBeforeExpire * 24 * 60 * 60 * 1000);
   var messageFormatData = [];
   
   _.each(groupedMessages, function(messages, userId){
@@ -40,17 +41,17 @@ function formatMessageData(groupedMessages){
     _.each(messages, function(message){
       if (message.expired_at <= expireTime) {
         expiredPoint += message.amount;
-        expiredAt += message.expired_at;
+        expiredAt = message.expired_at;
       }
       
       totalPoint += message.amount;
-      
-      messageFormatData.push({
-        'user_id': userId,
-        'expired_point': expiredPoint,
-        'expired_at': expiredAt,
-        'total_point': totalPoint
-      });
+    });
+    
+    messageFormatData.push({
+      'user_id': userId,
+      'expired_point': expiredPoint,
+      'expired_at': expiredAt,
+      'total_point': totalPoint
     });
   });
 
@@ -60,7 +61,7 @@ function formatMessageData(groupedMessages){
 function groupExpiredMessages(messages){
   var groupedMessages = _.groupBy(messages, 'user_id');
   var expiredMessages = {};
-  
+
   _.each(groupedMessages, function(messages, userId){
     if (expiredPointExist(messages)) {
       expiredMessages[userId] = messages;
@@ -75,9 +76,6 @@ function groupExpiredMessages(messages){
 }
 
 function expiredPointExist(message){
-  var currentTime = new Date().getTime();
-  var expireTime = currentTime + (daysBeforeExpire * 24 * 60 * 60 * 1000);
-  
   var exist = _.filter(message, function(item){
     return item.expired_at <= expireTime && item.amount >= minAmount;
   });
