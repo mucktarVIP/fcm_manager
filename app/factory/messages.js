@@ -61,7 +61,7 @@ module.exports = {
     notification.setClickAction('');
 
     var dataBody = {
-  		message: 'You have ' + message.expired_point + ' Point out of ' + message.total_point + ' that will be expire on ' + expireDate.toString(),
+  		message: 'You have ' + message.expired_point + ' Point out of ' + message.total_point + ' that will be expire on ' + Moment(message.expired_at).format('MMM Do YYYY'),
   		title: 'Point Expiration Title',
     }
 
