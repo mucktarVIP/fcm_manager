@@ -2,6 +2,7 @@ var Request = require('../models/fcm/request');
 var NotificationPayload = require('../models/fcm/notificationPayload');
 var DataPayload = require('../models/fcm/dataPayload');
 var Options = require('../models/fcm/options');
+var Moment = require('moment');
 
 module.exports = {
   cartAbandonmentFirstMessage: function(){
@@ -53,10 +54,8 @@ module.exports = {
     return new Request(null, notification, data);
   },
   pointExpirationMessage: function(message){
-    var expireDate = new Date(message.expired_at);
-    
     var notification = new NotificationPayload('Point Expiration Title');
-    notification.setBody('You have ' + message.expired_point + ' Point out of ' + message.total_point + ' that will be expire on ' + expireDate.toString());
+    notification.setBody('You have ' + message.expired_point + ' Point out of ' + message.total_point + ' that will be expire on ' + Moment(message.expired_at).format('MMM Do YYYY'));
     notification.setIcon('ic_notification');
     notification.setSound('notification');
     notification.setClickAction('');
