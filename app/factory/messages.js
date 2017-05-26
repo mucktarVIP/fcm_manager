@@ -68,5 +68,37 @@ module.exports = {
     var data = new DataPayload(dataBody);
 
     return new Request(null, notification, data);
+  },
+  orderShippedMessage: function(message){
+    var notification = new NotificationPayload('Item Shipped Title');
+    notification.setBody('Item shipped body');
+    notification.setIcon('ic_notification');
+    notification.setSound('notification');
+    notification.setClickAction('');
+
+    var dataBody = {
+  		message: 'Item shipped body',
+  		title: 'Item Shipped Title',
+    }
+
+    var data = new DataPayload(dataBody);
+
+    return new Request(null, notification, data);
+  },
+  bankTransferProcedure: function(message){
+    var notification = new NotificationPayload('Bank Transfer Procedure Title');
+    notification.setBody('Bank transfer procedure body');
+    notification.setIcon('ic_notification');
+    notification.setSound('notification');
+    notification.setClickAction('');
+
+    var dataBody = {
+  		message: 'Bank transfer procedurebody',
+  		title: 'Bank Transfer Procedure Title',
+    }
+
+    var data = new DataPayload(dataBody);
+
+    return new Request(null, notification, data);
   }
 };

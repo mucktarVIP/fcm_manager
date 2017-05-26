@@ -21,6 +21,8 @@ const VERSION = "/v1.0.0";
 var fcmController = require(appRoot+"/app/controllers/fcmTokens.js");
 var cartAbandonmentController = require(appRoot+"/app/controllers/cartAbandonmentSender.js");
 var pointExpirationController = require(appRoot+"/app/controllers/pointExpirationSender.js");
+var orderShippedController = require(appRoot+"/app/controllers/orderShippedSender.js");
+var bankTransferProcedureController = require(appRoot+"/app/controllers/bankTransferProcedureSender.js");
 
 server.route([
   { method: 'GET', path:"/stats", handler: function(request, reply){ reply("ok"); } },
@@ -32,6 +34,8 @@ server.route([
   { method: 'POST', path:NS+VERSION+'/cartAbandonmentSender/third', handler: cartAbandonmentController.third },
   
   { method: 'POST', path:NS+VERSION+'/pointExpiration', handler: pointExpirationController.send },
+  { method: 'POST', path:NS+VERSION+'/orderShipped', handler: orderShippedController.send },
+  { method: 'POST', path:NS+VERSION+'/bankTransferProcedure', handler: bankTransferProcedureController.send },
   
 ]);
 
