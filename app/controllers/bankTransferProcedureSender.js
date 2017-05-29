@@ -5,6 +5,22 @@ var messageService = require(appRoot + '/app/services/message.js');
 var _ = require('lodash');
 
 var db = config.get('redis').db.bankTransferExpiration;
+var bankTransferConfig = config.get('bankTransfer');
+var sentMessages = [];
+
+function filterMessages(messages){
+  var currentTime = new Date().getTime();
+  
+  var messages = _.filter(messages, function(message){
+    var timeSpent = currentTime - message.created_at;
+    var sendLeadTime = message.sent_count * bankTransferConfig.timeSpanBetweenMessage || 0;
+    var n = timeSpent - bankTransferConfig.minTimeSpent;
+
+    return n >= 0 && n >= sendLeadTime;
+  });
+  
+  return messages;
+}
 
 function processMessages(messages){
   var sendFcmRequest = _.omitBy(_.map(messages, function(fcmRequest){
@@ -27,9 +43,24 @@ function processMessages(messages){
 module.exports.send = function(request, reply){
   messageService.fetchQueue(db)
     .then(function(list){
-      return messageService.formatMessages(list, 'bankTransferProcedure');
+      sentMessages = filterMessages(list);
+      if (!sentMessages.length) {
+        return Promise.reject('No message to send');
+      }
+      return messageService.formatMessages(sentMessages, 'bankTransferProcedure');
     })
     .then(processMessages)
+    .then(function(){
+      var updateMessage = _.each(sentMessages, function(message){
+        var key = message.user_id + '__' + message.payment_id;
+        var newMessage = message;
+        newMessage.sent_count = message.sent_count + 1;
+        
+        return messageService.updateMessage(db, key, message);
+      });
+      
+      return Promise.all(updateMessage);
+    })
     .then(function(){
       reply({message: 'Sent'}).code(200);
     })
