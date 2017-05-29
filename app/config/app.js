@@ -27,8 +27,8 @@ store = new Confidence.Store({
       },
       db: {
         userFcm: 1,
-        cartAbandonment: 2,
-        bankTransferExpiration: 5,
+        cartAbandonment: 5,
+        bankTransferExpiration: 2,
         pointExpiration: 4,
         shipment: 3
       }
@@ -79,6 +79,11 @@ store = new Confidence.Store({
   pointExpiration:{
     minAmount: 1000,
     daysLeft: 60
+  },
+  bankTransfer: {
+    minTimeSpent: 1 * 60 * 60 * 1000,
+    timeSpanBetweenMessage: 12 * 60 * 60 * 1000,
+    leadTime: 3 * 24 * 60 * 60 * 1000
   }
 });
 
