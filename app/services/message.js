@@ -82,6 +82,23 @@ module.exports.updateSentParam = function(message, nth, db){
   });
 }
 
+module.exports.updateMessage = function(db, key, message){
+  return new Promise(function(resolve, reject){
+    client.selectDB(db)
+      .then(function(){
+        return client.write(key, JSON.stringify(message))
+      })
+      .then(function(res){
+        console.log('update success', res);
+        resolve(res);
+      })
+      .catch(function(err){
+        console.log('update error', err);
+        reject(err);
+      });
+  });
+}
+
 module.exports.deleteFromQueue = function(keys, db){
   return client.selectDB(db)
     .then(function(){
