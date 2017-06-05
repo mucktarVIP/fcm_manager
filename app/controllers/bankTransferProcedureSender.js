@@ -6,6 +6,11 @@ var _ = require('lodash');
 
 var db = config.get('redis').db.bankTransferExpiration;
 
+/**
+ * Filter banktransfer message by its lifetime and timespan from last send
+ * @param  {Array} messages array of raw redis message
+ * @return {array}          array of message meet filter conditions
+ */
 function filterMessages(messages){
   var bankTransferConfig = config.get('bankTransfer');
   var currentTime = new Date().getTime();
@@ -21,6 +26,11 @@ function filterMessages(messages){
   return messages;
 }
 
+/**
+ * Send message via fcm
+ * @param  {Object} messages fcm request model object
+ * @return {Promise}         Promise with array of error (if request failed to send) and message_id
+ */
 function processMessages(messages){
   var sendFcmRequest = _.map(messages, function(fcmRequest){
     return fcmRequest.send(config.get('fcm').serverKey)
@@ -33,6 +43,11 @@ function processMessages(messages){
   }));
 }
 
+/**
+ * update last sent param to redis
+ * @param  {Array} messages  array of redis message
+ * @return {Promise}         promise array of update status
+ */
 function updateMessage(messages){
   var updateMessage = _.each(messages, function(message){
     var key = message.user_id + '__' + message.payment_id;
@@ -50,38 +65,36 @@ module.exports.send = async function(request, reply){
   const messages = await messageService.fetchQueue(db)
     // handle rejection
     .catch((err) => {
-      reply(Boom.create(400, 'Message list empty'));
+      return reply(Boom.create(400, 'Message list empty'));
     });
     
-  // if message not empty
-  if (messages && messages.length) {
-    // filter messages which is eligible to send
-    const sentMessages =  filterMessages(messages);
+  // filter messages which is eligible to send
+  const sentMessages =  filterMessages(messages);
 
-    if (!sentMessages.length) {
-      return reply(Boom.create(400, 'No message to send'));
-    }
-    
-    // format message to fcm request
-    const formattedMessages = await messageService.formatMessages(sentMessages, 'bankTransferProcedure');
-    
-    // filter succesly created message
-    const fcmRequest = _.filter(formattedMessages, (item) => { return !item.error; } );
-    
-    // check if message is succesfully formatted
-    if (!fcmRequest.length) {
-      return reply(Boom.create(400, 'No user match'));
-    } 
-    // send messages
-    await processMessages(fcmRequest);
-    
-    // update sent count
-    return updateMessage(sentMessages)
-      .then((res) => {
-        return reply(Boom.create(200, 'Sent'));
-      })
-      .catch((err) => {
-        return reply(Boom.badRequest(err));
-      });
+  if (!sentMessages.length) {
+    return reply(Boom.create(400, 'No message to send'));
   }
+  
+  // format message to fcm request
+  const formattedMessages = await messageService.formatMessages(sentMessages, 'bankTransferProcedure');
+  
+  // filter succesfully formatted message
+  const fcmRequest = _.filter(formattedMessages, (item) => { return !item.error; } );
+  
+  // check succesfully formatted message is not empty
+  if (!fcmRequest.length) {
+    return reply(Boom.create(400, 'No user match'));
+  }
+  
+  // send messages
+  await processMessages(fcmRequest);
+  
+  // update sent count
+  return updateMessage(sentMessages)
+    .then((res) => {
+      return reply(Boom.create(200, 'Sent'));
+    })
+    .catch((err) => {
+      return reply(Boom.badRequest(err));
+    });
 };
