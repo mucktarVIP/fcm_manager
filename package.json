@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postinstall": "cp ./app/config/app.js.example ./app.config/app.js",
+    "postinstall": "cp app/config/app.js.example app.config/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "echo \"Specify env -- start:(local|dev|prod)\"",
     "start:local": "ENVIRONTMENT=local $(npm bin)/forever start main.js -o ./log/system.log -e ./log/system.log 2>&1",
