@@ -82,7 +82,7 @@ store = new Confidence.Store({
   },
   bankTransfer: {
     minTimeSpent: 1 * 60 * 60 * 1000,
-    timeSpanBetweenMessage: 12 * 60 * 60 * 1000,
+    timeSpanBetweenMessage: 12 * 60 * 60 * 1000, //set to false if message tobe send once
     leadTime: 3 * 24 * 60 * 60 * 1000
   }
 });

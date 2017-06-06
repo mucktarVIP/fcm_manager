@@ -17,10 +17,15 @@ function filterMessages(messages){
   
   var messages = _.filter(messages, function(message){
     var timeSpent = currentTime - message.created_at;
-    var sendLeadTime = message.sent_count * bankTransferConfig.timeSpanBetweenMessage || 0;
-    var n = timeSpent - bankTransferConfig.minTimeSpent;
+    
+    if (!bankTransferConfig.timeSpanBetweenMessage && message.sent_count) {
+      return false;
+    } else {
+      var sendLeadTime = message.sent_count * bankTransferConfig.timeSpanBetweenMessage || 0;
+      var n = timeSpent - bankTransferConfig.minTimeSpent;
 
-    return n >= 0 && n >= sendLeadTime;
+      return n >= 0 && n >= sendLeadTime;
+    }
   });
   
   return messages;
