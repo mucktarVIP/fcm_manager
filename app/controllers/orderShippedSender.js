@@ -25,16 +25,34 @@ function processMessages(messages){
   }
 }
 
+function deleteFromQueue(messages){
+  var deleteMessage = _.each(messages, function(message){
+    var key = message.user_id + '__' + message.shipment_id;
+    
+    return messageService.deleteFromQueue(key, db);
+  });
+  
+  return Promise.all(deleteMessage);
+}
+
 module.exports.send = function(request, reply){
+  var sentMessages = [];
   messageService.fetchQueue(db)
     .then(function(list){
+      console.log(list);
+      sentMessages = list;
       return messageService.formatMessages(list, 'orderShippedMessage');
     })
     .then(processMessages)
     .then(function(){
       reply({message: 'Sent'}).code(200);
     })
+    .finally(function(){
+      console.log('delete from list', sentMessages);
+      deleteFromQueue(sentMessages);
+    })
     .catch(function(err){
       console.log(err);
+      reply(Boom.badRequest(err));
     });
 };
